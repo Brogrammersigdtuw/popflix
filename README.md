@@ -19,9 +19,9 @@ Recommendation: Recommends top N similar movies based on your input.
 
 🛠 Built With -
 Python 
-Pandas, NumPy
-Scikit-learn
-TMDB Dataset
+Pandas, NumPy,
+Scikit-learn,
+TMDB Dataset,
 Jupyter Notebook
 
 
