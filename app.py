@@ -57,6 +57,6 @@ if st.button("✨ Recommend"):
     cols = st.columns(5)
     for i in range(5):
         with cols[i]:
-            image = posters[i]
-            st.image(image, caption='Movie poster', use_container_width=True)
+            image_url = posters[i]
+            st.image(image_url, use_container_width=True)  # 👈 inserted as requested
             st.caption(names[i])
