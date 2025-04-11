@@ -136,64 +136,83 @@ if st.button("✨ Recommend"):
     results = recommend(selected_movie)
     st.subheader("💡 You may also like:")
 
-    cards_html = """
+    movie_cards_html = """
     <style>
-        .movie-container {
-            display: flex;
-            gap: 20px;
-            overflow-x: auto;
-            padding: 20px 0;
-        }
-        .movie-card {
-            flex: 0 0 auto;
-            width: 200px;
-            text-align: center;
-            background-color: """ + bg_color + """;
-            color: """ + text_color + """;
-            padding: 10px;
-            border-radius: 12px;
-            box-shadow: 0 0 10px rgba(255,255,255,0.1);
-        }
-        .movie-card img {
-            width: 100%;
-            border-radius: 8px;
-        }
-        .movie-title {
-            font-size: 18px;
-            margin-top: 10px;
-        }
-        .movie-subtext {
-            font-size: 14px;
-            margin-top: 4px;
-        }
-        .trailer-button {
-            margin-top: 8px;
-            display: inline-block;
-            padding: 6px 12px;
-            border-radius: 6px;
-            background-color: #e50914;
-            color: white;
-            text-decoration: none;
-            font-size: 14px;
-        }
-        .trailer-button:hover {
-            background-color: #ff3c3c;
-        }
+      .movie-scroll-container {
+        display: flex;
+        flex-direction: row;
+        gap: 20px;
+        overflow-x: auto;
+        padding: 20px 0;
+      }
+
+      .movie-card {
+        flex: 0 0 auto;
+        width: 180px;
+        background-color: #1e1e1e;
+        border-radius: 10px;
+        padding: 10px;
+        color: white;
+        box-shadow: 0 0 8px rgba(255, 255, 255, 0.05);
+      }
+
+      .movie-card img {
+        width: 100%;
+        border-radius: 8px;
+        margin-bottom: 10px;
+      }
+
+      .movie-title {
+        font-size: 16px;
+        font-weight: bold;
+        margin-bottom: 5px;
+      }
+
+      .movie-subtext {
+        font-size: 14px;
+        margin-bottom: 3px;
+      }
+
+      .trailer-button {
+        display: inline-block;
+        margin-top: 8px;
+        padding: 5px 10px;
+        background-color: crimson;
+        color: white;
+        border-radius: 5px;
+        text-decoration: none;
+        font-size: 13px;
+      }
+
+      .trailer-button:hover {
+        background-color: #ff3c3c;
+      }
+
+      /* Hide default scrollbars (optional) */
+      .movie-scroll-container::-webkit-scrollbar {
+        height: 8px;
+      }
+
+      .movie-scroll-container::-webkit-scrollbar-thumb {
+        background-color: crimson;
+        border-radius: 4px;
+      }
     </style>
-    <div class="movie-container">
+
+    <div class="movie-scroll-container">
     """
 
     for name, poster, rating, genres, trailer_url in results:
-        cards_html += f"""
+        movie_cards_html += f"""
         <div class="movie-card">
             <img src="{poster}" alt="{name}">
             <div class="movie-title">{name}</div>
             <div class="movie-subtext">⭐ IMDb: {rating}</div>
             <div class="movie-subtext">🎭 {genres}</div>
-            <a href="{trailer_url}" target="_blank" class="trailer-button">▶ Watch Trailer</a>
+            <a href="{trailer_url}" target="_blank" class="trailer-button">Watch Trailer</a>
         </div>
         """
 
-    cards_html += "</div>"
+    movie_cards_html += "</div>"
 
-    st.markdown(cards_html, unsafe_allow_html=True)
+    st.markdown(movie_cards_html, unsafe_allow_html=True)
