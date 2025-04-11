@@ -132,87 +132,20 @@ movies = load_data()
 similarity = get_similarity_matrix(movies)
 
 selected_movie = st.selectbox("🎥 Select a movie you like:", movies['title'].values)
+
 if st.button("✨ Recommend"):
     results = recommend(selected_movie)
     st.subheader("💡 You may also like:")
-
-    movie_cards_html = """
-    <style>
-      .movie-scroll-container {
-        display: flex;
-        flex-direction: row;
-        gap: 20px;
-        overflow-x: auto;
-        padding: 20px 0;
-      }
-
-      .movie-card {
-        flex: 0 0 auto;
-        width: 180px;
-        background-color: #1e1e1e;
-        border-radius: 10px;
-        padding: 10px;
-        color: white;
-        box-shadow: 0 0 8px rgba(255, 255, 255, 0.05);
-      }
-
-      .movie-card img {
-        width: 100%;
-        border-radius: 8px;
-        margin-bottom: 10px;
-      }
-
-      .movie-title {
-        font-size: 16px;
-        font-weight: bold;
-        margin-bottom: 5px;
-      }
-
-      .movie-subtext {
-        font-size: 14px;
-        margin-bottom: 3px;
-      }
-
-      .trailer-button {
-        display: inline-block;
-        margin-top: 8px;
-        padding: 5px 10px;
-        background-color: crimson;
-        color: white;
-        border-radius: 5px;
-        text-decoration: none;
-        font-size: 13px;
-      }
-
-      .trailer-button:hover {
-        background-color: #ff3c3c;
-      }
-
-      /* Hide default scrollbars (optional) */
-      .movie-scroll-container::-webkit-scrollbar {
-        height: 8px;
-      }
-
-      .movie-scroll-container::-webkit-scrollbar-thumb {
-        background-color: crimson;
-        border-radius: 4px;
-      }
-    </style>
-
-    <div class="movie-scroll-container">
-    """
-
-    for name, poster, rating, genres, trailer_url in results:
-        movie_cards_html += f"""
-        <div class="movie-card">
-            <img src="{poster}" alt="{name}">
+    st.markdown("<div style='display: flex; flex-wrap: wrap; justify-content: center;'>", unsafe_allow_html=True)
+    for idx, (name, poster, rating, genres, trailer_url) in enumerate(results):
+    st.markdown(f"""
+        <div class="movie-card" style="margin: 20px;">
+            <img src="{poster}" alt="{name}" class="movie-poster">
             <div class="movie-title">{name}</div>
             <div class="movie-subtext">⭐ IMDb: {rating}</div>
             <div class="movie-subtext">🎭 {genres}</div>
-            <a href="{trailer_url}" target="_blank" class="trailer-button">Watch Trailer</a>
+            <a href="{trailer_url}" target="_blank" class="trailer-button">▶ Watch Trailer</a>
         </div>
-        """
+    """, unsafe_allow_html=True)
 
-    movie_cards_html += "</div>"
-
-    st.markdown(movie_cards_html, unsafe_allow_html=True)
+st.markdown("</div>", unsafe_allow_html=True)
