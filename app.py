@@ -5,12 +5,11 @@ from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 from PIL import Image
 import base64
-from io import BytesIO
 
 # ==== Streamlit Page Config ====
 st.set_page_config(page_title="PopFlix", layout="wide")
 
-# ==== Function to Convert Logo Image to Base64 ====
+# ==== Function to Convert Logo to Base64 ====
 def get_base64_img(image_path):
     with open(image_path, "rb") as img_file:
         data = img_file.read()
@@ -19,20 +18,20 @@ def get_base64_img(image_path):
 # ==== Load and Encode Logo ====
 logo_base64 = get_base64_img("logo.png")
 
-# ==== Header with Logo Before Title ====
+# ==== Header with BIG Logo Close to Title ====
 st.markdown(f"""
-    <div style="display: flex; align-items: center; justify-content: center; gap: 20px; margin-top: 20px;">
-        <img src="data:image/png;base64,{logo_base64}" style="height: 100px;"/>
+    <div style="display: flex; align-items: center; justify-content: center; gap: 10px; margin-top: 10px;">
+        <img src="data:image/png;base64,{logo_base64}" style="height: 150px;"/>
         <h1 style="font-size: 64px; margin: 0;">PopFlix</h1>
     </div>
 """, unsafe_allow_html=True)
 
-# ==== Tagline with Larger Fonts ====
+# ==== Tagline with Larger Font ====
 st.markdown("""
-    <p style='text-align: center; font-size: 22px; margin-top: 10px;'>
+    <p style='text-align: center; font-size: 24px; margin-top: 10px;'>
         Because scrolling for 45 minutes is a real horror movie.
     </p>
-    <p style='text-align: center; font-size: 18px;'>
+    <p style='text-align: center; font-size: 20px;'>
         Just pick a movie you love — and PopFlix will suggest five similar films, complete with posters and titles.
     </p>
 """, unsafe_allow_html=True)
@@ -47,7 +46,7 @@ def fetch_poster(movie_id):
     except:
         return "https://via.placeholder.com/500x750?text=Error"
 
-# ==== Load Data ====
+# ==== Load Movie Data ====
 @st.cache_data
 def load_data():
     df = pd.read_csv("movies.csv")
@@ -57,7 +56,7 @@ def load_data():
     df['tags'] = df['tags'].str.lower()
     return df
 
-# ==== Compute Similarity Matrix ====
+# ==== Similarity Matrix ====
 @st.cache_data
 def get_similarity_matrix(data):
     cv = CountVectorizer(max_features=5000, stop_words='english')
@@ -65,7 +64,7 @@ def get_similarity_matrix(data):
     similarity = cosine_similarity(vector_matrix)
     return similarity
 
-# ==== Recommendation Engine ====
+# ==== Recommendation Logic ====
 def recommend(movie):
     index = movies[movies['title'] == movie].index[0]
     distances = sorted(enumerate(similarity[index]), key=lambda x: x[1], reverse=True)[1:6]
@@ -77,7 +76,7 @@ def recommend(movie):
         posters.append(fetch_poster(movie_id))
     return recommended_movies, posters
 
-# ==== App Logic ====
+# ==== Main App ====
 movies = load_data()
 similarity = get_similarity_matrix(movies)
 
