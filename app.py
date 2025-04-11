@@ -9,24 +9,23 @@ import base64
 # ==== Streamlit Page Config ====
 st.set_page_config(page_title="PopFlix", layout="wide")
 
-# ==== Function to Convert Logo to Base64 ====
+# ==== Convert Logo to Base64 ====
 def get_base64_img(image_path):
     with open(image_path, "rb") as img_file:
-        data = img_file.read()
-        return base64.b64encode(data).decode()
+        return base64.b64encode(img_file.read()).decode()
 
-# ==== Load and Encode Logo ====
+# ==== Load & Encode Logo ====
 logo_base64 = get_base64_img("logo.png")
 
-# ==== Header with Tightly Aligned Logo and Title ====
+# ==== Display Header ====
 st.markdown(f"""
     <div style="display: flex; align-items: center; justify-content: center; margin-top: 10px;">
-        <img src="data:image/png;base64,{logo_base64}" style="height: 90px; margin-right: 10px;"/>
+        <img src="data:image/png;base64,{logo_base64}" style="height: 140px; margin-right: 10px;" />
         <h1 style="font-size: 64px; margin: 0;">PopFlix</h1>
     </div>
 """, unsafe_allow_html=True)
 
-# ==== Tagline with Larger Font ====
+# ==== Tagline ====
 st.markdown("""
     <p style='text-align: center; font-size: 24px; margin-top: 10px;'>
         Because scrolling for 45 minutes is a real horror movie.
@@ -36,7 +35,7 @@ st.markdown("""
     </p>
 """, unsafe_allow_html=True)
 
-# ==== TMDB Poster Fetching ====
+# ==== Fetch Poster from TMDB ====
 def fetch_poster(movie_id):
     try:
         url = f"https://api.themoviedb.org/3/movie/{movie_id}?api_key=8265bd1679663a7ea12ac168da84d2e8&language=en-US"
@@ -46,7 +45,7 @@ def fetch_poster(movie_id):
     except:
         return "https://via.placeholder.com/500x750?text=Error"
 
-# ==== Load Movie Data ====
+# ==== Load Dataset ====
 @st.cache_data
 def load_data():
     df = pd.read_csv("movies.csv")
@@ -76,7 +75,7 @@ def recommend(movie):
         posters.append(fetch_poster(movie_id))
     return recommended_movies, posters
 
-# ==== Main App ====
+# ==== Main Interface ====
 movies = load_data()
 similarity = get_similarity_matrix(movies)
 
@@ -90,3 +89,4 @@ if st.button("✨ Recommend"):
         with cols[i]:
             st.image(posters[i], use_container_width=True)
             st.caption(names[i])
+
