@@ -36,15 +36,66 @@ st.markdown("""
     </p>
 """, unsafe_allow_html=True)
 
-# ==== TMDB Poster Fetching ====
-def fetch_poster(movie_id):
+# ==== Toggle for Dark/Light Mode ====
+dark_mode = st.toggle("🌙 Dark Mode", value=True)
+bg_color = "#111" if dark_mode else "#fff"
+text_color = "#fff" if dark_mode else "#000"
+
+st.markdown(f"""
+    <style>
+        .movie-card {{
+            display: inline-block;
+            margin: 10px;
+            text-align: center;
+            background-color: {bg_color};
+            color: {text_color};
+            padding: 10px;
+            border-radius: 12px;
+            width: 200px;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }}
+        .movie-card:hover {{
+            transform: scale(1.05);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4);
+        }}
+        .movie-poster {{
+            width: 100%;
+            border-radius: 8px;
+        }}
+        .movie-title {{
+            font-size: 18px;
+            margin-top: 10px;
+        }}
+        .movie-subtext {{
+            font-size: 14px;
+            margin-top: 4px;
+        }}
+        .trailer-button {{
+            margin-top: 8px;
+            display: inline-block;
+            padding: 6px 12px;
+            border-radius: 6px;
+            background-color: #e50914;
+            color: white;
+            text-decoration: none;
+            font-size: 14px;
+        }}
+    </style>
+""", unsafe_allow_html=True)
+
+# ==== TMDB Poster + Metadata Fetching ====
+def fetch_movie_metadata(movie_id):
     try:
         url = f"https://api.themoviedb.org/3/movie/{movie_id}?api_key=8265bd1679663a7ea12ac168da84d2e8&language=en-US"
         data = requests.get(url).json()
         poster_path = data.get('poster_path')
-        return f"https://image.tmdb.org/t/p/w500/{poster_path}" if poster_path else "https://via.placeholder.com/500x750?text=No+Image"
+        imdb_rating = data.get('vote_average', 'N/A')
+        genres = ", ".join([genre['name'] for genre in data.get('genres', [])])
+        trailer_url = f"https://www.youtube.com/results?search_query={'+'.join(data.get('title', '').split())}+trailer"
+        poster_url = f"https://image.tmdb.org/t/p/w500/{poster_path}" if poster_path else "https://via.placeholder.com/500x750?text=No+Image"
+        return poster_url, imdb_rating, genres, trailer_url
     except:
-        return "https://via.placeholder.com/500x750?text=Error"
+        return "https://via.placeholder.com/500x750?text=Error", "N/A", "", "#"
 
 # ==== Load Movie Data ====
 @st.cache_data
@@ -68,13 +119,13 @@ def get_similarity_matrix(data):
 def recommend(movie):
     index = movies[movies['title'] == movie].index[0]
     distances = sorted(enumerate(similarity[index]), key=lambda x: x[1], reverse=True)[1:6]
-    recommended_movies = []
-    posters = []
+    results = []
     for i in distances:
         movie_id = movies.iloc[i[0]].id
-        recommended_movies.append(movies.iloc[i[0]].title)
-        posters.append(fetch_poster(movie_id))
-    return recommended_movies, posters
+        title = movies.iloc[i[0]].title
+        poster, rating, genres, trailer = fetch_movie_metadata(movie_id)
+        results.append((title, poster, rating, genres, trailer))
+    return results
 
 # ==== Main App ====
 movies = load_data()
@@ -83,10 +134,17 @@ similarity = get_similarity_matrix(movies)
 selected_movie = st.selectbox("🎥 Select a movie you like:", movies['title'].values)
 
 if st.button("✨ Recommend"):
-    names, posters = recommend(selected_movie)
+    results = recommend(selected_movie)
     st.subheader("💡 You may also like:")
-    cols = st.columns(5)
-    for i in range(5):
-        with cols[i]:
-            st.image(posters[i], use_container_width=True)
-            st.caption(names[i])
+
+    for idx, (name, poster, rating, genres, trailer_url) in enumerate(results):
+        delay = 0.3 + idx * 0.1
+        st.markdown(f"""
+            <div class="movie-card" style="animation-delay: {delay:.1f}s;">
+                <img src="{poster}" alt="{name}" class="movie-poster">
+                <div class="movie-title">{name}</div>
+                <div class="movie-subtext">⭐ IMDb: {rating}</div>
+                <div class="movie-subtext">🎭 {genres}</div>
+                <a href="{trailer_url}" target="_blank" class="trailer-button">▶ Watch Trailer</a>
+            </div>
+        """, unsafe_allow_html=True)
