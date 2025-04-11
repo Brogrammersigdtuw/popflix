@@ -78,15 +78,69 @@ def recommend(movie):
 # ==== Main Interface ====
 movies = load_data()
 similarity = get_similarity_matrix(movies)
+# ==== Inject CSS for Netflix-style Animation ====
+st.markdown("""
+    <style>
+    @keyframes fadeInUp {
+      0% { opacity: 0; transform: translateY(30px); }
+      100% { opacity: 1; transform: translateY(0); }
+    }
+
+    .recommend-grid {
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 20px;
+      margin-top: 30px;
+      padding: 0 40px;
+    }
+
+    .movie-card {
+      background-color: #1b1b1b;
+      border-radius: 16px;
+      overflow: hidden;
+      text-align: center;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      width: 200px;
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.6);
+      animation: fadeInUp 0.8s ease forwards;
+      opacity: 0;
+    }
+
+    .movie-card:hover {
+      transform: translateY(-10px) scale(1.05);
+      box-shadow: 0 12px 30px rgba(229, 9, 20, 0.4);
+    }
+
+    .movie-card img {
+      width: 100%;
+      height: 300px;
+      object-fit: cover;
+      border-bottom: 2px solid #e50914;
+    }
+
+    .movie-card h4 {
+      margin: 10px 0 4px;
+      color: #e50914;
+      font-size: 1.1rem;
+    }
+    </style>
+""", unsafe_allow_html=True)
 
 selected_movie = st.selectbox("🎥 Select a movie you like:", movies['title'].values)
 
 if st.button("✨ Recommend"):
     names, posters = recommend(selected_movie)
     st.subheader("💡 You may also like:")
-    cols = st.columns(5)
+        html_cards = '<div class="recommend-grid">'
     for i in range(5):
-        with cols[i]:
-            st.image(posters[i], use_container_width=True)
-            st.caption(names[i])
+        html_cards += f"""
+            <div class="movie-card" style="animation-delay: {0.2 + i * 0.2}s;">
+                <img src="{posters[i]}" alt="{names[i]}">
+                <h4>{names[i]}</h4>
+            </div>
+        """
+    html_cards += '</div>'
+    st.markdown(html_cards, unsafe_allow_html=True)
+
 
