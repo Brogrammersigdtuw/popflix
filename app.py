@@ -132,22 +132,22 @@ movies = load_data()
 similarity = get_similarity_matrix(movies)
 
 selected_movie = st.selectbox("🎥 Select a movie you like:", movies['title'].values)
-
 if st.button("✨ Recommend"):
-    # Start a horizontal scrollable flex container
-st.markdown("<div style='display: flex; overflow-x: auto; padding: 10px;'>", unsafe_allow_html=True)
+    results = recommend(selected_movie)
+    st.subheader("💡 You may also like:")
+    st.markdown("<div style='display: flex; overflow-x: auto; padding: 10px;'>", unsafe_allow_html=True)
 
-for idx, (name, poster, rating, genres, trailer_url) in enumerate(results):
-    delay = 0.3 + idx * 0.1
-    st.markdown(f"""
-        <div class="movie-card" style="animation-delay: {delay:.1f}s; flex: 0 0 auto;">
-            <img src="{poster}" alt="{name}" class="movie-poster">
-            <div class="movie-title">{name}</div>
-            <div class="movie-subtext">⭐ IMDb: {rating}</div>
-            <div class="movie-subtext">🎭 {genres}</div>
-            <a href="{trailer_url}" target="_blank" class="trailer-button">▶ Watch Trailer</a>
-        </div>
-    """, unsafe_allow_html=True)
+    for idx, (name, poster, rating, genres, trailer_url) in enumerate(results):
+        delay = 0.3 + idx * 0.1
+        st.markdown(f"""
+            <div class="movie-card" style="animation-delay: {delay:.1f}s; flex: 0 0 auto;">
+                <img src="{poster}" alt="{name}" class="movie-poster">
+                <div class="movie-title">{name}</div>
+                <div class="movie-subtext">⭐ IMDb: {rating}</div>
+                <div class="movie-subtext">🎭 {genres}</div>
+                <a href="{trailer_url}" target="_blank" class="trailer-button">▶ Watch Trailer</a>
+            </div>
+        """, unsafe_allow_html=True)
 
-# Close the flex container
-st.markdown("</div>", unsafe_allow_html=True)
+    # Close the flex container
+    st.markdown("</div>", unsafe_allow_html=True)
