@@ -84,7 +84,6 @@ selected_movie = st.selectbox("🎥 Select a movie you like:", movies['title'].v
 if st.button("✨ Recommend"):
     names, posters = recommend(selected_movie)
 
-    # Inject Netflix-style card CSS
     st.markdown("""
         <style>
         @keyframes fadeInUp {
@@ -92,57 +91,45 @@ if st.button("✨ Recommend"):
             100% { opacity: 1; transform: translateY(0); }
         }
 
-        .recommend-grid {
-            display: flex;
-            justify-content: center;
-            flex-wrap: wrap;
-            gap: 30px;
-            margin-top: 30px;
-        }
-
         .movie-card {
-            width: 250px;
-            height: 420px;
-            background-color: #1c1c1c;
-            border-radius: 12px;
-            overflow: hidden;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+            display: inline-block;
+            margin: 15px;
             text-align: center;
             animation: fadeInUp 0.6s ease forwards;
             opacity: 0;
+            background-color: #111;
+            padding: 10px;
+            border-radius: 12px;
             transition: transform 0.3s ease;
         }
 
         .movie-card:hover {
             transform: scale(1.05);
-            box-shadow: 0 12px 24px rgba(229, 9, 20, 0.4);
         }
 
         .movie-card img {
-            width: 100%;
-            height: 350px;
+            width: 150px;
+            height: 225px;
             object-fit: cover;
-            border-bottom: 2px solid #e50914;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.6);
         }
 
         .movie-card h4 {
-            color: #e50914;
-            margin: 10px 0;
-            font-size: 1rem;
+            color: #fff;
+            margin-top: 8px;
+            font-size: 16px;
         }
         </style>
     """, unsafe_allow_html=True)
 
-    # Render movie cards
-    html = '<div class="recommend-grid">'
-    for i in range(len(names)):
-        html += f"""
-        <div class="movie-card" style="animation-delay: {0.2 + i*0.1}s;">
-            <img src="{posters[i]}" alt="{names[i]}">
-            <h4>{names[i]}</h4>
-        </div>
-        """
-    html += '</div>'
-
     st.markdown("💡 You may also like:", unsafe_allow_html=True)
-    st.markdown(html, unsafe_allow_html=True)
+
+    for idx, (name, poster) in enumerate(zip(names, posters)):
+        delay = 0.3 + idx * 0.1
+        st.markdown(f"""
+            <div class="movie-card" style="animation-delay: {delay:.1f}s;">
+                <img src="{poster}" alt="{name}">
+                <h4>{name}</h4>
+            </div>
+        """, unsafe_allow_html=True)
