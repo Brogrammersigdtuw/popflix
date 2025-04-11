@@ -4,20 +4,38 @@ import streamlit as st
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 from PIL import Image
+import base64
+from io import BytesIO
 
 # ==== Streamlit Page Config ====
-st.set_page_config(page_title="🎬 PopFlix", layout="wide")
+st.set_page_config(page_title="PopFlix", layout="wide")
 
-# ==== Load and Display Logo ====
-logo = Image.open("logo.png")  # ✅ Updated image name
-st.markdown("<div style='text-align: center;'>", unsafe_allow_html=True)
-st.image(logo, width=200)  # Adjust width if needed
-st.markdown("</div>", unsafe_allow_html=True)
+# ==== Function to Convert Logo Image to Base64 ====
+def get_base64_img(image_path):
+    with open(image_path, "rb") as img_file:
+        data = img_file.read()
+        return base64.b64encode(data).decode()
 
-# ==== Title and Tagline ====
-st.title("🍿 PopFlix")
-st.markdown("Because scrolling for 45 minutes is a real horror movie.")
-st.markdown("Just pick a movie you love, and PopFlix will suggest five similar films — complete with posters and titles.")
+# ==== Load and Encode Logo ====
+logo_base64 = get_base64_img("logo.png")
+
+# ==== Header with Logo Before Title ====
+st.markdown(f"""
+    <div style="display: flex; align-items: center; justify-content: center; gap: 20px; margin-top: 20px;">
+        <img src="data:image/png;base64,{logo_base64}" style="height: 100px;"/>
+        <h1 style="font-size: 64px; margin: 0;">PopFlix</h1>
+    </div>
+""", unsafe_allow_html=True)
+
+# ==== Tagline with Larger Fonts ====
+st.markdown("""
+    <p style='text-align: center; font-size: 22px; margin-top: 10px;'>
+        Because scrolling for 45 minutes is a real horror movie.
+    </p>
+    <p style='text-align: center; font-size: 18px;'>
+        Just pick a movie you love — and PopFlix will suggest five similar films, complete with posters and titles.
+    </p>
+""", unsafe_allow_html=True)
 
 # ==== TMDB Poster Fetching ====
 def fetch_poster(movie_id):
@@ -47,7 +65,7 @@ def get_similarity_matrix(data):
     similarity = cosine_similarity(vector_matrix)
     return similarity
 
-# ==== Movie Recommendation Logic ====
+# ==== Recommendation Engine ====
 def recommend(movie):
     index = movies[movies['title'] == movie].index[0]
     distances = sorted(enumerate(similarity[index]), key=lambda x: x[1], reverse=True)[1:6]
