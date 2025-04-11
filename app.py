@@ -132,7 +132,7 @@ selected_movie = st.selectbox("🎥 Select a movie you like:", movies['title'].v
 if st.button("✨ Recommend"):
     names, posters = recommend(selected_movie)
     st.subheader("💡 You may also like:")
-        html_cards = '<div class="recommend-grid">'
+    html_cards = '<div class="recommend-grid">'
     for i in range(5):
         html_cards += f"""
             <div class="movie-card" style="animation-delay: {0.2 + i * 0.2}s;">
@@ -142,5 +142,6 @@ if st.button("✨ Recommend"):
         """
     html_cards += '</div>'
     st.markdown(html_cards, unsafe_allow_html=True)
+
 
 
