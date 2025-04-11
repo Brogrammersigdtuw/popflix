@@ -3,13 +3,23 @@ import requests
 import streamlit as st
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
+from PIL import Image
 
+# ==== Streamlit Page Config ====
 st.set_page_config(page_title="🎬 PopFlix", layout="wide")
 
+# ==== Load and Display Logo ====
+logo = Image.open("logo.png")  # ✅ Updated image name
+st.markdown("<div style='text-align: center;'>", unsafe_allow_html=True)
+st.image(logo, width=200)  # Adjust width if needed
+st.markdown("</div>", unsafe_allow_html=True)
+
+# ==== Title and Tagline ====
 st.title("🍿 PopFlix")
 st.markdown("Because scrolling for 45 minutes is a real horror movie.")
 st.markdown("Just pick a movie you love, and PopFlix will suggest five similar films — complete with posters and titles.")
 
+# ==== TMDB Poster Fetching ====
 def fetch_poster(movie_id):
     try:
         url = f"https://api.themoviedb.org/3/movie/{movie_id}?api_key=8265bd1679663a7ea12ac168da84d2e8&language=en-US"
@@ -19,6 +29,7 @@ def fetch_poster(movie_id):
     except:
         return "https://via.placeholder.com/500x750?text=Error"
 
+# ==== Load Data ====
 @st.cache_data
 def load_data():
     df = pd.read_csv("movies.csv")
@@ -28,6 +39,7 @@ def load_data():
     df['tags'] = df['tags'].str.lower()
     return df
 
+# ==== Compute Similarity Matrix ====
 @st.cache_data
 def get_similarity_matrix(data):
     cv = CountVectorizer(max_features=5000, stop_words='english')
@@ -35,6 +47,7 @@ def get_similarity_matrix(data):
     similarity = cosine_similarity(vector_matrix)
     return similarity
 
+# ==== Movie Recommendation Logic ====
 def recommend(movie):
     index = movies[movies['title'] == movie].index[0]
     distances = sorted(enumerate(similarity[index]), key=lambda x: x[1], reverse=True)[1:6]
@@ -46,6 +59,7 @@ def recommend(movie):
         posters.append(fetch_poster(movie_id))
     return recommended_movies, posters
 
+# ==== App Logic ====
 movies = load_data()
 similarity = get_similarity_matrix(movies)
 
@@ -57,6 +71,5 @@ if st.button("✨ Recommend"):
     cols = st.columns(5)
     for i in range(5):
         with cols[i]:
-            image_url = posters[i]
-            st.image(image_url, use_container_width=True)  # 👈 inserted as requested
+            st.image(posters[i], use_container_width=True)
             st.caption(names[i])
