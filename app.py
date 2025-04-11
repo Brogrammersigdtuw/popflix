@@ -132,19 +132,68 @@ movies = load_data()
 similarity = get_similarity_matrix(movies)
 
 selected_movie = st.selectbox("🎥 Select a movie you like:", movies['title'].values)
-
 if st.button("✨ Recommend"):
     results = recommend(selected_movie)
     st.subheader("💡 You may also like:")
 
-    for idx, (name, poster, rating, genres, trailer_url) in enumerate(results):
-        delay = 0.3 + idx * 0.1
-        st.markdown(f"""
-            <div class="movie-card" style="animation-delay: {delay:.1f}s;">
-                <img src="{poster}" alt="{name}" class="movie-poster">
-                <div class="movie-title">{name}</div>
-                <div class="movie-subtext">⭐ IMDb: {rating}</div>
-                <div class="movie-subtext">🎭 {genres}</div>
-                <a href="{trailer_url}" target="_blank" class="trailer-button">▶ Watch Trailer</a>
-            </div>
-        """, unsafe_allow_html=True)
+    cards_html = """
+    <style>
+        .movie-container {
+            display: flex;
+            gap: 20px;
+            overflow-x: auto;
+            padding: 20px 0;
+        }
+        .movie-card {
+            flex: 0 0 auto;
+            width: 200px;
+            text-align: center;
+            background-color: """ + bg_color + """;
+            color: """ + text_color + """;
+            padding: 10px;
+            border-radius: 12px;
+            box-shadow: 0 0 10px rgba(255,255,255,0.1);
+        }
+        .movie-card img {
+            width: 100%;
+            border-radius: 8px;
+        }
+        .movie-title {
+            font-size: 18px;
+            margin-top: 10px;
+        }
+        .movie-subtext {
+            font-size: 14px;
+            margin-top: 4px;
+        }
+        .trailer-button {
+            margin-top: 8px;
+            display: inline-block;
+            padding: 6px 12px;
+            border-radius: 6px;
+            background-color: #e50914;
+            color: white;
+            text-decoration: none;
+            font-size: 14px;
+        }
+        .trailer-button:hover {
+            background-color: #ff3c3c;
+        }
+    </style>
+    <div class="movie-container">
+    """
+
+    for name, poster, rating, genres, trailer_url in results:
+        cards_html += f"""
+        <div class="movie-card">
+            <img src="{poster}" alt="{name}">
+            <div class="movie-title">{name}</div>
+            <div class="movie-subtext">⭐ IMDb: {rating}</div>
+            <div class="movie-subtext">🎭 {genres}</div>
+            <a href="{trailer_url}" target="_blank" class="trailer-button">▶ Watch Trailer</a>
+        </div>
+        """
+
+    cards_html += "</div>"
+
+    st.markdown(cards_html, unsafe_allow_html=True)
