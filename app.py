@@ -57,24 +57,25 @@ if st.button("✨ Recommend"):
     cols = st.columns(5)
     for i in range(5):
         with cols[i]:
-            st.image(posters[i], use_column_width=True)
+            image = posters[i]
+            st.image(image, caption='Movie poster', use_container_width=True)
             st.caption(names[i])
 
 with st.expander("📌 Project Highlights"):
     st.markdown("""
-- 🔍 *Content-Based Filtering*: Uses movie overviews and metadata (genres, keywords, etc.) to compute similarities.
-- 📐 *Cosine Similarity*: Quantifies how close two movies are in terms of their content.
-- 🎥 *TMDB Dataset*: Real-world data including titles, overviews, cast, crew, genres, and more.
-- ⚡ *Fast & Accurate* recommendations in real-time.
+- 🔍 Content-Based Filtering: Uses movie overviews and metadata (genres, keywords, etc.) to compute similarities.
+- 📐 Cosine Similarity: Quantifies how close two movies are in terms of their content.
+- 🎥 TMDB Dataset: Real-world data including titles, overviews, cast, crew, genres, and more.
+- ⚡ Fast & Accurate recommendations in real-time.
     """)
 
 with st.expander("🧠 How It Works"):
     st.markdown("""
-1. *Preprocessing*: Cleans and merges relevant movie data.  
-2. *Feature Engineering*: Creates a combined string of keywords, genres, cast, director, etc.  
-3. *Vectorization*: Uses CountVectorizer to convert text to vectors.  
-4. *Similarity Scoring*: Computes cosine similarity between movie vectors.  
-5. *Recommendation*: Returns top 5 similar movies based on your selection.
+1. Preprocessing: Cleans and merges relevant movie data.  
+2. Feature Engineering: Creates a combined string of keywords, genres, cast, director, etc.  
+3. Vectorization: Uses CountVectorizer to convert text to vectors.  
+4. Similarity Scoring: Computes cosine similarity between movie vectors.  
+5. Recommendation: Returns top 5 similar movies based on your selection.
     """)
 
 with st.expander("📁 Dataset Used"):
