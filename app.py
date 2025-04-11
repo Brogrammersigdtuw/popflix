@@ -82,33 +82,35 @@ similarity = get_similarity_matrix(movies)
 selected_movie = st.selectbox("🎥 Select a movie you like:", movies['title'].values)
 
 if st.button("✨ Recommend"):
-        # Inject animated card styles
+    names, posters = recommend(selected_movie)
+
+    # Inject Netflix-style card CSS
     st.markdown("""
         <style>
         @keyframes fadeInUp {
-          0% { opacity: 0; transform: translateY(30px); }
-          100% { opacity: 1; transform: translateY(0); }
+            0% { opacity: 0; transform: translateY(20px); }
+            100% { opacity: 1; transform: translateY(0); }
         }
 
         .recommend-grid {
-          display: flex;
-          justify-content: center;
-          flex-wrap: wrap;
-          gap: 30px;
-          margin-top: 30px;
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 30px;
+            margin-top: 30px;
         }
 
         .movie-card {
-            width: 300px;
-            height: 450px;
+            width: 250px;
+            height: 420px;
             background-color: #1c1c1c;
             border-radius: 12px;
             overflow: hidden;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-            transition: transform 0.3s, box-shadow 0.3s;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
             text-align: center;
-            animation: fadeInUp 0.8s ease forwards;
+            animation: fadeInUp 0.6s ease forwards;
             opacity: 0;
+            transition: transform 0.3s ease;
         }
 
         .movie-card:hover {
@@ -118,27 +120,29 @@ if st.button("✨ Recommend"):
 
         .movie-card img {
             width: 100%;
-            height: 330px;
+            height: 350px;
             object-fit: cover;
             border-bottom: 2px solid #e50914;
         }
 
         .movie-card h4 {
-            margin: 10px 0;
             color: #e50914;
-            font-size: 1.1rem;
+            margin: 10px 0;
+            font-size: 1rem;
         }
         </style>
     """, unsafe_allow_html=True)
 
-    # Render cards with animation
-    html_cards = '<div class="recommend-grid">'
-    for i in range(5):
-        html_cards += f"""
-            <div class="movie-card" style="animation-delay: {0.2 + i * 0.2}s;">
-                <img src="{posters[i]}" alt="{names[i]}">
-                <h4>{names[i]}</h4>
-            </div>
+    # Render movie cards
+    html = '<div class="recommend-grid">'
+    for i in range(len(names)):
+        html += f"""
+        <div class="movie-card" style="animation-delay: {0.2 + i*0.1}s;">
+            <img src="{posters[i]}" alt="{names[i]}">
+            <h4>{names[i]}</h4>
+        </div>
         """
-    html_cards += '</div>'
-    st.markdown(html_cards, unsafe_allow_html=True)
+    html += '</div>'
+
+    st.markdown("💡 You may also like:", unsafe_allow_html=True)
+    st.markdown(html, unsafe_allow_html=True)
