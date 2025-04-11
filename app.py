@@ -132,20 +132,22 @@ movies = load_data()
 similarity = get_similarity_matrix(movies)
 
 selected_movie = st.selectbox("🎥 Select a movie you like:", movies['title'].values)
-
 if st.button("✨ Recommend"):
     results = recommend(selected_movie)
     st.subheader("💡 You may also like:")
-    st.markdown("<div style='display: flex; flex-wrap: wrap; justify-content: center;'>", unsafe_allow_html=True)
-    for idx, (name, poster, rating, genres, trailer_url) in enumerate(results):
-    st.markdown(f"""
-        <div class="movie-card" style="margin: 20px;">
-            <img src="{poster}" alt="{name}" class="movie-poster">
-            <div class="movie-title">{name}</div>
-            <div class="movie-subtext">⭐ IMDb: {rating}</div>
-            <div class="movie-subtext">🎭 {genres}</div>
-            <a href="{trailer_url}" target="_blank" class="trailer-button">▶ Watch Trailer</a>
-        </div>
-    """, unsafe_allow_html=True)
 
-st.markdown("</div>", unsafe_allow_html=True)
+    st.markdown("<div style='display: flex; flex-wrap: wrap; justify-content: center;'>", unsafe_allow_html=True)
+
+    for idx, (name, poster, rating, genres, trailer_url) in enumerate(results):
+        st.markdown(f"""
+            <div class="movie-card" style="margin: 20px;">
+                <img src="{poster}" alt="{name}" class="movie-poster">
+                <div class="movie-title">{name}</div>
+                <div class="movie-subtext">⭐ IMDb: {rating}</div>
+                <div class="movie-subtext">🎭 {genres}</div>
+                <a href="{trailer_url}" target="_blank" class="trailer-button">▶ Watch Trailer</a>
+            </div>
+        """, unsafe_allow_html=True)
+
+    # End flex container
+    st.markdown("</div>", unsafe_allow_html=True)
