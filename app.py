@@ -81,7 +81,7 @@ with st.expander("📁 Dataset Used"):
     st.markdown("[TMDB Movie Metadata on Kaggle](https://www.kaggle.com/datasets/tmdb/tmdb-movie-metadata?resource=download)")
 
 with st.expander("🛠 Built With"):
-    st.markdown("Python, Pandas, NumPy, Scikit-learn, TMDB Dataset, Streamlit")
-        <p> Using content-based filtering and cosine similarity to recommend movies based on plot, genre, cast, and more.</p>
-    </div>
-""", unsafe_allow_html=True)
+    st.markdown(
+    "<p>Using content-based filtering and cosine similarity to recommend movies based on plot, genre, cast, and more.</p>",
+    unsafe_allow_html=True
+)
