@@ -18,10 +18,10 @@ def get_base64_img(image_path):
 # ==== Load and Encode Logo ====
 logo_base64 = get_base64_img("logo.png")
 
-# ==== Header with BIG Logo Close to Title ====
+# ==== Header with Tightly Aligned Logo and Title ====
 st.markdown(f"""
-    <div style="display: flex; align-items: center; justify-content: center; gap: 10px; margin-top: 10px;">
-        <img src="data:image/png;base64,{logo_base64}" style="height: 150px;"/>
+    <div style="display: flex; align-items: center; justify-content: center; margin-top: 10px;">
+        <img src="data:image/png;base64,{logo_base64}" style="height: 90px; margin-right: 10px;"/>
         <h1 style="font-size: 64px; margin: 0;">PopFlix</h1>
     </div>
 """, unsafe_allow_html=True)
