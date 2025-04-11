@@ -136,68 +136,72 @@ if st.button("✨ Recommend"):
     results = recommend(selected_movie)
     st.subheader("💡 You may also like:")
 
-    # Start of custom scrollable section
     cards_html = """
     <style>
-        .movie-container {
-            display: flex;
-            flex-wrap: nowrap;
-            overflow-x: auto;
-            gap: 20px;
-            padding: 10px;
-        }
-        .movie-card {
-            flex: 0 0 auto;
-            width: 200px;
-            text-align: center;
-            background-color: %s;
-            color: %s;
-            border-radius: 10px;
-            padding: 10px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.2);
-            transition: transform 0.3s;
-        }
-        .movie-card:hover {
-            transform: scale(1.05);
-        }
-        .movie-card img {
-            width: 100%%;
-            border-radius: 8px;
-        }
-        .movie-title {
-            font-size: 16px;
-            margin: 10px 0 4px;
-            font-weight: bold;
-        }
-        .movie-subtext {
-            font-size: 13px;
-            margin: 2px 0;
-        }
-        .trailer-button {
-            margin-top: 6px;
-            display: inline-block;
-            padding: 6px 10px;
-            border-radius: 5px;
-            background-color: #e50914;
-            color: white;
-            text-decoration: none;
-            font-size: 13px;
-        }
+      .movie-container {
+        display: flex;
+        gap: 20px;
+        overflow-x: auto;
+        padding: 20px 0;
+      }
+
+      .movie-card {
+        flex: 0 0 auto;
+        width: 180px;
+        background-color: #1e1e1e;
+        border-radius: 10px;
+        padding: 10px;
+        text-align: center;
+        color: white;
+        box-shadow: 0 0 10px rgba(255, 255, 255, 0.1);
+      }
+
+      .movie-card img {
+        width: 100%;
+        border-radius: 8px;
+        margin-bottom: 10px;
+      }
+
+      .movie-title {
+        font-size: 16px;
+        font-weight: bold;
+        margin-bottom: 4px;
+      }
+
+      .movie-subtext {
+        font-size: 14px;
+        margin-bottom: 4px;
+      }
+
+      .trailer-button {
+        display: inline-block;
+        margin-top: 8px;
+        padding: 6px 10px;
+        background-color: crimson;
+        color: white;
+        border-radius: 5px;
+        text-decoration: none;
+        font-size: 13px;
+      }
+
+      .trailer-button:hover {
+        background-color: #ff3c3c;
+      }
     </style>
     <div class="movie-container">
-    """ % (bg_color, text_color)
+    """
 
+    # Dynamically add cards from recommendation
     for name, poster, rating, genres, trailer_url in results:
         cards_html += f"""
-            <div class="movie-card">
-                <img src="{poster}" alt="{name}">
-                <div class="movie-title">{name}</div>
-                <div class="movie-subtext">⭐ IMDb: {rating}</div>
-                <div class="movie-subtext">🎭 {genres}</div>
-                <a href="{trailer_url}" target="_blank" class="trailer-button">▶ Watch Trailer</a>
-            </div>
+        <div class="movie-card">
+          <img src="{poster}" alt="{name}">
+          <div class="movie-title">{name}</div>
+          <div class="movie-subtext">⭐ IMDb: {rating}</div>
+          <div class="movie-subtext">🎬 {genres}</div>
+          <a href="{trailer_url}" target="_blank" class="trailer-button">Watch Trailer</a>
+        </div>
         """
 
-    cards_html += "</div>"  # close .movie-container
-
+    cards_html += "</div>"  # Close the container
     st.markdown(cards_html, unsafe_allow_html=True)
