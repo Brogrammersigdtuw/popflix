@@ -88,11 +88,10 @@ st.markdown("""
 
     .recommend-grid {
       display: flex;
-      justify-content: space-between;
+      justify-content: center;
       flex-wrap: wrap;
-      gap: 20px;
+      gap: 30px;
       margin-top: 30px;
-      padding: 0 40px;
     }
 
     .movie-card {
@@ -101,7 +100,7 @@ st.markdown("""
       overflow: hidden;
       text-align: center;
       transition: transform 0.3s ease, box-shadow 0.3s ease;
-      width: 200px;
+      width: 180px;
       box-shadow: 0 6px 20px rgba(0, 0, 0, 0.6);
       animation: fadeInUp 0.8s ease forwards;
       opacity: 0;
@@ -109,24 +108,23 @@ st.markdown("""
 
     .movie-card:hover {
       transform: translateY(-10px) scale(1.05);
-      box-shadow: 0 12px 30px rgba(229, 9, 20, 0.4);
+      box-shadow: 0 12px 30px rgba(229, 9, 20, 0.5);
     }
 
     .movie-card img {
       width: 100%;
-      height: 300px;
+      height: 270px;
       object-fit: cover;
       border-bottom: 2px solid #e50914;
     }
 
     .movie-card h4 {
-      margin: 10px 0 4px;
+      margin: 10px 0 15px;
       color: #e50914;
-      font-size: 1.1rem;
+      font-size: 1.05rem;
     }
     </style>
 """, unsafe_allow_html=True)
-
 selected_movie = st.selectbox("🎥 Select a movie you like:", movies['title'].values)
 
 if st.button("✨ Recommend"):
@@ -142,6 +140,3 @@ if st.button("✨ Recommend"):
         """
     html_cards += '</div>'
     st.markdown(html_cards, unsafe_allow_html=True)
-
-
-
