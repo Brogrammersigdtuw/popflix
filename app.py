@@ -135,13 +135,60 @@ selected_movie = st.selectbox("🎥 Select a movie you like:", movies['title'].v
 if st.button("✨ Recommend"):
     results = recommend(selected_movie)
     st.subheader("💡 You may also like:")
-    st.markdown("<div style='display: flex; overflow-x: auto; padding: 10px;'>", unsafe_allow_html=True)
+    st.markdown(f"""
+        <style>
+            .movie-container {{
+                display: flex;
+                flex-wrap: nowrap;
+                overflow-x: auto;
+                gap: 20px;
+                padding: 10px;
+            }}
+            .movie-card {{
+                flex: 0 0 auto;
+                width: 180px;
+                text-align: center;
+                background-color: {bg_color};
+                color: {text_color};
+                border-radius: 10px;
+                padding: 10px;
+                box-shadow: 0 0 10px rgba(0,0,0,0.2);
+                transition: transform 0.3s;
+            }}
+            .movie-card:hover {{
+                transform: scale(1.05);
+            }}
+            .movie-card img {{
+                width: 100%;
+                border-radius: 8px;
+            }}
+            .movie-title {{
+                font-size: 16px;
+                margin: 10px 0 4px;
+                font-weight: bold;
+            }}
+            .movie-subtext {{
+                font-size: 13px;
+                margin: 2px 0;
+            }}
+            .trailer-button {{
+                margin-top: 6px;
+                display: inline-block;
+                padding: 6px 10px;
+                border-radius: 5px;
+                background-color: #e50914;
+                color: white;
+                text-decoration: none;
+                font-size: 13px;
+            }}
+        </style>
+    """, unsafe_allow_html=True)
+    st.markdown('<div class="movie-container">', unsafe_allow_html=True)
 
-    for idx, (name, poster, rating, genres, trailer_url) in enumerate(results):
-        delay = 0.3 + idx * 0.1
+    for name, poster, rating, genres, trailer_url in results:
         st.markdown(f"""
-            <div class="movie-card" style="animation-delay: {delay:.1f}s; flex: 0 0 auto;">
-                <img src="{poster}" alt="{name}" class="movie-poster">
+            <div class="movie-card">
+                <img src="{poster}" alt="{name}">
                 <div class="movie-title">{name}</div>
                 <div class="movie-subtext">⭐ IMDb: {rating}</div>
                 <div class="movie-subtext">🎭 {genres}</div>
@@ -149,5 +196,4 @@ if st.button("✨ Recommend"):
             </div>
         """, unsafe_allow_html=True)
 
-    # Close the flex container
-    st.markdown("</div>", unsafe_allow_html=True)
+    st.markdown('</div>', unsafe_allow_html=True)
