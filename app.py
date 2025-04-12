@@ -136,21 +136,84 @@ if st.button("✨ Recommend"):
     results = recommend(selected_movie)
     st.subheader("💡 You may also like:")
 
-    # Flex container with no wrapping and horizontal scrolling
-    st.markdown("""
-        <div style='display: flex; flex-wrap: nowrap; overflow-x: auto; padding: 10px;'>
-    """, unsafe_allow_html=True)
+    # CSS + Flex container + movie cards
+    movie_cards_html = """
+    <style>
+        .movie-scroll-container {
+            display: flex;
+            flex-wrap: nowrap;
+            overflow-x: auto;
+            padding: 10px;
+            gap: 20px;
+        }
 
-    for idx, (name, poster, rating, genres, trailer_url) in enumerate(results):
-        st.markdown(f"""
-            <div class="movie-card" style="flex: 0 0 auto; margin: 10px;">
-                <img src="{poster}" alt="{name}" class="movie-poster">
-                <div class="movie-title">{name}</div>
-                <div class="movie-subtext">⭐ IMDb: {rating}</div>
-                <div class="movie-subtext">🎭 {genres}</div>
-                <a href="{trailer_url}" target="_blank" class="trailer-button">▶ Watch Trailer</a>
-            </div>
-        """, unsafe_allow_html=True)
+        .movie-card {
+            flex: 0 0 auto;
+            width: 200px;
+            background-color: #1e1e1e;
+            color: white;
+            border-radius: 12px;
+            padding: 10px;
+            text-align: center;
+            box-shadow: 0 0 8px rgba(255, 255, 255, 0.1);
+        }
 
-    # End of flex container
-    st.markdown("</div>", unsafe_allow_html=True)
+        .movie-poster {
+            width: 100%;
+            border-radius: 8px;
+        }
+
+        .movie-title {
+            font-size: 16px;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+
+        .movie-subtext {
+            font-size: 14px;
+            margin-top: 4px;
+        }
+
+        .trailer-button {
+            margin-top: 8px;
+            display: inline-block;
+            padding: 6px 12px;
+            border-radius: 6px;
+            background-color: crimson;
+            color: white;
+            text-decoration: none;
+            font-size: 13px;
+        }
+
+        .trailer-button:hover {
+            background-color: #ff3c3c;
+        }
+
+        /* Optional: Custom scrollbar styling */
+        .movie-scroll-container::-webkit-scrollbar {
+            height: 8px;
+        }
+
+        .movie-scroll-container::-webkit-scrollbar-thumb {
+            background-color: crimson;
+            border-radius: 4px;
+        }
+    </style>
+
+    <div class="movie-scroll-container">
+    """
+
+    for name, poster, rating, genres, trailer_url in results:
+        movie_cards_html += f"""
+        <div class="movie-card">
+            <img src="{poster}" alt="{name}" class="movie-poster">
+            <div class="movie-title">{name}</div>
+            <div class="movie-subtext">⭐ IMDb: {rating}</div>
+            <div class="movie-subtext">🎭 {genres}</div>
+            <a href="{trailer_url}" target="_blank" class="trailer-button">▶ Watch Trailer</a>
+        </div>
+        """
+
+    movie_cards_html += "</div>"
+
+    st.markdown(movie_cards_html, unsafe_allow_html=True)
