@@ -3,22 +3,21 @@ import requests
 import streamlit as st
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
-from PIL import Image
 import base64
 
-# ==== Streamlit Page Config ====
+# ==== Streamlit Config ====
 st.set_page_config(page_title="PopFlix", layout="wide")
 
-# ==== Function to Convert Logo to Base64 ====
+# ==== Function to Convert Image to Base64 ====
 def get_base64_img(image_path):
     with open(image_path, "rb") as img_file:
         data = img_file.read()
         return base64.b64encode(data).decode()
 
-# ==== Load and Encode Logo ====
+# ==== Load Logo ====
 logo_base64 = get_base64_img("logo.png")
 
-# ==== Header with Tightly Aligned Logo and Title ====
+# ==== Logo & Title ====
 st.markdown(f"""
     <div style="display: flex; align-items: center; justify-content: center; margin-top: 10px;">
         <img src="data:image/png;base64,{logo_base64}" style="height: 90px; margin-right: 10px;"/>
@@ -26,7 +25,7 @@ st.markdown(f"""
     </div>
 """, unsafe_allow_html=True)
 
-# ==== Tagline with Larger Font ====
+# ==== Tagline ====
 st.markdown("""
     <p style='text-align: center; font-size: 24px; margin-top: 10px;'>
         Because scrolling for 45 minutes is a real horror movie.
@@ -36,11 +35,15 @@ st.markdown("""
     </p>
 """, unsafe_allow_html=True)
 
-# ==== Toggle for Dark/Light Mode ====
-dark_mode = st.toggle("🌙 Dark Mode", value=True)
+# ==== Toggle ====
+st.markdown("<label style='font-size: 20px; font-weight: bold;'>🌙 Dark Mode</label>", unsafe_allow_html=True)
+dark_mode = st.toggle("", value=True)
+
+# ==== Theme Colors ====
 bg_color = "#111" if dark_mode else "#fff"
 text_color = "#fff" if dark_mode else "#000"
 
+# ==== Custom Styling ====
 st.markdown(f"""
     <style>
         .movie-card {{
@@ -67,23 +70,26 @@ st.markdown(f"""
             margin-top: 10px;
         }}
         .movie-subtext {{
-            font-size: 14px;
-            margin-top: 4px;
+            font-size: 16px;
+            margin-top: 6px;
         }}
         .trailer-button {{
-            margin-top: 8px;
+            margin-top: 10px;
             display: inline-block;
-            padding: 6px 12px;
+            padding: 8px 14px;
             border-radius: 6px;
             background-color: #e50914;
             color: white;
             text-decoration: none;
-            font-size: 14px;
+            font-size: 16px;
+        }}
+        button {{
+            cursor: pointer;
         }}
     </style>
 """, unsafe_allow_html=True)
 
-# ==== TMDB Poster + Metadata Fetching ====
+# ==== Fetch Metadata from TMDB ====
 def fetch_movie_metadata(movie_id):
     try:
         url = f"https://api.themoviedb.org/3/movie/{movie_id}?api_key=8265bd1679663a7ea12ac168da84d2e8&language=en-US"
@@ -107,7 +113,6 @@ def load_data():
     df['tags'] = df['tags'].str.lower()
     return df
 
-# ==== Similarity Matrix ====
 @st.cache_data
 def get_similarity_matrix(data):
     cv = CountVectorizer(max_features=5000, stop_words='english')
@@ -115,7 +120,6 @@ def get_similarity_matrix(data):
     similarity = cosine_similarity(vector_matrix)
     return similarity
 
-# ==== Recommendation Logic ====
 def recommend(movie):
     index = movies[movies['title'] == movie].index[0]
     distances = sorted(enumerate(similarity[index]), key=lambda x: x[1], reverse=True)[1:6]
@@ -127,12 +131,32 @@ def recommend(movie):
         results.append((title, poster, rating, genres, trailer))
     return results
 
-# ==== Main App ====
+# ==== Load and Process ====
 movies = load_data()
 similarity = get_similarity_matrix(movies)
 
-selected_movie = st.selectbox("🎥 Select a movie you like:", movies['title'].values)
-if st.button("✨ Recommend"):
+# ==== Movie Selector ====
+st.markdown("<h3 style='font-size: 26px;'>🎥 Select a movie you like:</h3>", unsafe_allow_html=True)
+selected_movie = st.selectbox("", movies['title'].values)
+
+# ==== Styled Recommend Button ====
+st.markdown("""
+    <div style="text-align: center; margin-top: 20px;">
+        <button style="
+            font-size: 20px;
+            background-color: #e50914;
+            color: white;
+            padding: 10px 25px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+        " onclick="document.getElementById('recommend-trigger').click()">✨ Recommend</button>
+    </div>
+""", unsafe_allow_html=True)
+recommend_button = st.button("", key="recommend-trigger")
+
+# ==== Show Recommendations ====
+if recommend_button:
     results = recommend(selected_movie)
     st.subheader("💡 You may also like:")
 
@@ -140,6 +164,7 @@ if st.button("✨ Recommend"):
     for i in range(5):
         with cols[i]:
             st.image(results[i][1], use_container_width=True)
-            st.markdown(f"**{results[i][0]}**")
-            st.caption(f"⭐ IMDb: {results[i][2]}\n\n🎭 {results[i][3]}")
-            st.markdown(f"[▶ Watch Trailer]({results[i][4]})", unsafe_allow_html=True)
+            st.markdown(f"<div class='movie-title'>{results[i][0]}</div>", unsafe_allow_html=True)
+            st.markdown(f"<div class='movie-subtext'>⭐ IMDb: {results[i][2]}</div>", unsafe_allow_html=True)
+            st.markdown(f"<div class='movie-subtext'>🎭 {results[i][3]}</div>", unsafe_allow_html=True)
+            st.markdown(f"<a href='{results[i][4]}' target='_blank' class='trailer-button'>▶ Watch Trailer</a>", unsafe_allow_html=True)
