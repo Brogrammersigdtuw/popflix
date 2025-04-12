@@ -136,84 +136,10 @@ if st.button("✨ Recommend"):
     results = recommend(selected_movie)
     st.subheader("💡 You may also like:")
 
-    # CSS + Flex container + movie cards
-    movie_cards_html = """
-    <style>
-        .movie-scroll-container {
-            display: flex;
-            flex-wrap: nowrap;
-            overflow-x: auto;
-            padding: 10px;
-            gap: 20px;
-        }
-
-        .movie-card {
-            flex: 0 0 auto;
-            width: 200px;
-            background-color: #1e1e1e;
-            color: white;
-            border-radius: 12px;
-            padding: 10px;
-            text-align: center;
-            box-shadow: 0 0 8px rgba(255, 255, 255, 0.1);
-        }
-
-        .movie-poster {
-            width: 100%;
-            border-radius: 8px;
-        }
-
-        .movie-title {
-            font-size: 16px;
-            font-weight: bold;
-            margin-top: 10px;
-        }
-
-        .movie-subtext {
-            font-size: 14px;
-            margin-top: 4px;
-        }
-
-        .trailer-button {
-            margin-top: 8px;
-            display: inline-block;
-            padding: 6px 12px;
-            border-radius: 6px;
-            background-color: crimson;
-            color: white;
-            text-decoration: none;
-            font-size: 13px;
-        }
-
-        .trailer-button:hover {
-            background-color: #ff3c3c;
-        }
-
-        /* Optional: Custom scrollbar styling */
-        .movie-scroll-container::-webkit-scrollbar {
-            height: 8px;
-        }
-
-        .movie-scroll-container::-webkit-scrollbar-thumb {
-            background-color: crimson;
-            border-radius: 4px;
-        }
-    </style>
-
-    <div class="movie-scroll-container">
-    """
-
-    for name, poster, rating, genres, trailer_url in results:
-        movie_cards_html += f"""
-        <div class="movie-card">
-            <img src="{poster}" alt="{name}" class="movie-poster">
-            <div class="movie-title">{name}</div>
-            <div class="movie-subtext">⭐ IMDb: {rating}</div>
-            <div class="movie-subtext">🎭 {genres}</div>
-            <a href="{trailer_url}" target="_blank" class="trailer-button">▶ Watch Trailer</a>
-        </div>
-        """
-
-    movie_cards_html += "</div>"
-
-    st.markdown(movie_cards_html, unsafe_allow_html=True)
+    cols = st.columns(5)
+    for i in range(5):
+        with cols[i]:
+            st.image(results[i][1], use_container_width=True)
+            st.markdown(f"**{results[i][0]}**")
+            st.caption(f"⭐ IMDb: {results[i][2]}\n\n🎭 {results[i][3]}")
+            st.markdown(f"[▶ Watch Trailer]({results[i][4]})", unsafe_allow_html=True)
