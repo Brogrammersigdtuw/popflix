@@ -136,14 +136,14 @@ if st.button("✨ Recommend"):
     results = recommend(selected_movie)
     st.subheader("💡 You may also like:")
 
-    # Begin flex container with no wrapping
+    # Flex container with no wrapping and horizontal scrolling
     st.markdown("""
-        <div style='display: flex; flex-wrap: nowrap; overflow-x: auto; justify-content: flex-start;'>
+        <div style='display: flex; flex-wrap: nowrap; overflow-x: auto; padding: 10px;'>
     """, unsafe_allow_html=True)
 
     for idx, (name, poster, rating, genres, trailer_url) in enumerate(results):
         st.markdown(f"""
-            <div class="movie-card" style="margin: 10px;">
+            <div class="movie-card" style="flex: 0 0 auto; margin: 10px;">
                 <img src="{poster}" alt="{name}" class="movie-poster">
                 <div class="movie-title">{name}</div>
                 <div class="movie-subtext">⭐ IMDb: {rating}</div>
@@ -152,5 +152,5 @@ if st.button("✨ Recommend"):
             </div>
         """, unsafe_allow_html=True)
 
-    # End flex container
+    # End of flex container
     st.markdown("</div>", unsafe_allow_html=True)
