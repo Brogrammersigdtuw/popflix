@@ -136,8 +136,10 @@ if st.button("✨ Recommend"):
     results = recommend(selected_movie)
     st.subheader("💡 You may also like:")
 
-    # Begin flex container with horizontal layout
-    st.markdown("<div style='display: flex; flex-wrap: nowrap; justify-content: space-around;'>", unsafe_allow_html=True)
+    # Begin flex container with no wrapping
+    st.markdown("""
+        <div style='display: flex; flex-wrap: nowrap; overflow-x: auto; justify-content: flex-start;'>
+    """, unsafe_allow_html=True)
 
     for idx, (name, poster, rating, genres, trailer_url) in enumerate(results):
         st.markdown(f"""
