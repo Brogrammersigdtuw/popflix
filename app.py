@@ -136,11 +136,12 @@ if st.button("✨ Recommend"):
     results = recommend(selected_movie)
     st.subheader("💡 You may also like:")
 
-    st.markdown("<div style='display: flex; flex-wrap: wrap; justify-content: center;'>", unsafe_allow_html=True)
+    # Begin flex container with horizontal layout
+    st.markdown("<div style='display: flex; flex-wrap: nowrap; justify-content: space-around;'>", unsafe_allow_html=True)
 
     for idx, (name, poster, rating, genres, trailer_url) in enumerate(results):
         st.markdown(f"""
-            <div class="movie-card" style="margin: 20px;">
+            <div class="movie-card" style="margin: 10px;">
                 <img src="{poster}" alt="{name}" class="movie-poster">
                 <div class="movie-title">{name}</div>
                 <div class="movie-subtext">⭐ IMDb: {rating}</div>
