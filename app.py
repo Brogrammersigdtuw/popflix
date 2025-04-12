@@ -3,21 +3,22 @@ import requests
 import streamlit as st
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
+from PIL import Image
 import base64
 
-# ==== Streamlit Config ====
+# ==== Streamlit Page Config ====
 st.set_page_config(page_title="PopFlix", layout="wide")
 
-# ==== Function to Convert Image to Base64 ====
+# ==== Function to Convert Logo to Base64 ====
 def get_base64_img(image_path):
     with open(image_path, "rb") as img_file:
         data = img_file.read()
         return base64.b64encode(data).decode()
 
-# ==== Load Logo ====
+# ==== Load and Encode Logo ====
 logo_base64 = get_base64_img("logo.png")
 
-# ==== Logo & Title ====
+# ==== Header with Logo and Title ====
 st.markdown(f"""
     <div style="display: flex; align-items: center; justify-content: center; margin-top: 10px;">
         <img src="data:image/png;base64,{logo_base64}" style="height: 90px; margin-right: 10px;"/>
@@ -35,15 +36,12 @@ st.markdown("""
     </p>
 """, unsafe_allow_html=True)
 
-# ==== Toggle ====
-st.markdown("<label style='font-size: 20px; font-weight: bold;'>🌙 Dark Mode</label>", unsafe_allow_html=True)
-dark_mode = st.toggle("", value=True)
-
-# ==== Theme Colors ====
+# ==== Dark Mode Toggle ====
+dark_mode = st.toggle("🌙 Dark Mode", value=True)
 bg_color = "#111" if dark_mode else "#fff"
 text_color = "#fff" if dark_mode else "#000"
 
-# ==== Custom Styling ====
+# ==== Custom CSS Styling ====
 st.markdown(f"""
     <style>
         .movie-card {{
@@ -67,6 +65,7 @@ st.markdown(f"""
         }}
         .movie-title {{
             font-size: 18px;
+            font-weight: bold;
             margin-top: 10px;
         }}
         .movie-subtext {{
@@ -82,14 +81,12 @@ st.markdown(f"""
             color: white;
             text-decoration: none;
             font-size: 16px;
-        }}
-        button {{
-            cursor: pointer;
+            font-weight: bold;
         }}
     </style>
 """, unsafe_allow_html=True)
 
-# ==== Fetch Metadata from TMDB ====
+# ==== TMDB API Fetch ====
 def fetch_movie_metadata(movie_id):
     try:
         url = f"https://api.themoviedb.org/3/movie/{movie_id}?api_key=8265bd1679663a7ea12ac168da84d2e8&language=en-US"
@@ -103,7 +100,7 @@ def fetch_movie_metadata(movie_id):
     except:
         return "https://via.placeholder.com/500x750?text=Error", "N/A", "", "#"
 
-# ==== Load Movie Data ====
+# ==== Load Movies Data ====
 @st.cache_data
 def load_data():
     df = pd.read_csv("movies.csv")
@@ -113,6 +110,7 @@ def load_data():
     df['tags'] = df['tags'].str.lower()
     return df
 
+# ==== Compute Similarities ====
 @st.cache_data
 def get_similarity_matrix(data):
     cv = CountVectorizer(max_features=5000, stop_words='english')
@@ -120,6 +118,7 @@ def get_similarity_matrix(data):
     similarity = cosine_similarity(vector_matrix)
     return similarity
 
+# ==== Recommendation Logic ====
 def recommend(movie):
     index = movies[movies['title'] == movie].index[0]
     distances = sorted(enumerate(similarity[index]), key=lambda x: x[1], reverse=True)[1:6]
@@ -131,40 +130,27 @@ def recommend(movie):
         results.append((title, poster, rating, genres, trailer))
     return results
 
-# ==== Load and Process ====
+# ==== Main App Execution ====
 movies = load_data()
 similarity = get_similarity_matrix(movies)
 
-# ==== Movie Selector ====
+# ==== Custom Label for Selectbox ====
 st.markdown("<h3 style='font-size: 26px;'>🎥 Select a movie you like:</h3>", unsafe_allow_html=True)
 selected_movie = st.selectbox("", movies['title'].values)
 
-# ==== Styled Recommend Button ====
-st.markdown("""
-    <div style="text-align: center; margin-top: 20px;">
-        <button style="
-            font-size: 20px;
-            background-color: #e50914;
-            color: white;
-            padding: 10px 25px;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-        " onclick="document.getElementById('recommend-trigger').click()">✨ Recommend</button>
-    </div>
-""", unsafe_allow_html=True)
-recommend_button = st.button("", key="recommend-trigger")
-
-# ==== Show Recommendations ====
-if recommend_button:
+if st.button("✨ Recommend"):
     results = recommend(selected_movie)
     st.subheader("💡 You may also like:")
 
     cols = st.columns(5)
     for i in range(5):
         with cols[i]:
-            st.image(results[i][1], use_container_width=True)
-            st.markdown(f"<div class='movie-title'>{results[i][0]}</div>", unsafe_allow_html=True)
-            st.markdown(f"<div class='movie-subtext'>⭐ IMDb: {results[i][2]}</div>", unsafe_allow_html=True)
-            st.markdown(f"<div class='movie-subtext'>🎭 {results[i][3]}</div>", unsafe_allow_html=True)
-            st.markdown(f"<a href='{results[i][4]}' target='_blank' class='trailer-button'>▶ Watch Trailer</a>", unsafe_allow_html=True)
+            st.markdown(f"""
+                <div class="movie-card">
+                    <img src="{results[i][1]}" class="movie-poster" />
+                    <div class="movie-title">{results[i][0]}</div>
+                    <div class="movie-subtext">⭐ IMDb: {results[i][2]}</div>
+                    <div class="movie-subtext">🎭 {results[i][3]}</div>
+                    <a class="trailer-button" href="{results[i][4]}" target="_blank">▶ Watch Trailer</a>
+                </div>
+            """, unsafe_allow_html=True)
